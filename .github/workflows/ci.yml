@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e "apps/api[dev]"
-      - run: cd apps/api && pytest tests/unit -q --cov=evalforge --cov-report=term --cov-fail-under=80
+      - run: cd apps/api && pytest tests/unit -q --cov=evalforge --cov-report=term --cov-fail-under=85
 
   test-integration:
     runs-on: ubuntu-latest
