@@ -1,0 +1,82 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-py:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e "apps/api[dev]"
+      - run: cd apps/api && ruff check src tests
+      - run: cd apps/api && black --check src tests
+
+  typecheck-py:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e "apps/api[dev]"
+      - run: cd apps/api && mypy src
+
+  test-py:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e "apps/api[dev]"
+      - run: cd apps/api && pytest tests/unit -q --cov=evalforge --cov-report=term --cov-fail-under=80
+
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e "apps/api[dev]"
+      - run: cd apps/api && pytest tests/integration -q
+
+  typecheck-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: cd apps/web && npm install --no-audit --no-fund
+      - run: cd apps/web && npm run typecheck
+
+  test-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: cd apps/web && npm install --no-audit --no-fund
+      - run: cd apps/web && npm test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint-py, typecheck-py, test-py, test-integration, typecheck-web, test-web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: cd apps/web && npm install --no-audit --no-fund && npm run build
