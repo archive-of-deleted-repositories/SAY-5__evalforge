@@ -32,7 +32,15 @@ class QualityScorer:
     def score(self, output_text: str, context: dict[str, Any]) -> AxisScore:
         rubric = context.get("rubric", DEFAULT_RUBRIC)
         verdict = self.provider.judge(rubric, output_text, self.few_shot_examples)
-        flagged = verdict.score < self.threshold
+        # The provider's label already accounts for any few-shot threshold relaxation,
+        # so it is authoritative for the flag. Fall back to the local threshold only
+        # when the provider does not emit a recognized on/off-rubric label.
+        if verdict.label == "on_rubric":
+            flagged = False
+        elif verdict.label == "off_rubric":
+            flagged = True
+        else:
+            flagged = verdict.score < self.threshold
 
         # Quality contributions: rubric tokens present in the output.
         contributions: list[Contribution] = []
