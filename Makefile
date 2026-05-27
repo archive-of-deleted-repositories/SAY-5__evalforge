@@ -25,11 +25,14 @@ test-web: ## frontend tests
 
 test: test-unit test-integration test-web ## all tests
 
-bench: ## inline latency bench
+bench: ## inline latency bench (full)
 	cd apps/api && python -m evalforge.bench
 
-bench-regress: ## bench regress gate
-	cd apps/api && python -m evalforge.bench --regress
+bench-smoke: ## inline latency bench (CI smoke)
+	cd apps/api && python -m evalforge.bench --smoke
+
+bench-regress: ## bench regress gate at 30 percent drift
+	cd apps/api && python -m evalforge.bench --smoke --regress
 
 e2e: ## Playwright e2e
 	cd apps/web && npm run e2e

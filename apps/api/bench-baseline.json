@@ -1,0 +1,17 @@
+{
+  "callers": 100,
+  "calls_per_caller": 10,
+  "total_calls": 1000,
+  "wall_seconds": 0.6649514999589883,
+  "req_per_sec": 1503.8690792661964,
+  "latency_ms_p50": 64.48633398395032,
+  "latency_ms_p95": 79.04583297204226,
+  "latency_ms_p99": 85.15429100953043,
+  "latency_ms_p999": 91.60154103301466,
+  "latency_ms_max": 91.60154103301466,
+  "error_count": 0,
+  "queue_depth_max": 982,
+  "axis_ms_quality_p99": 0.1,
+  "axis_ms_safety_p99": 0.1,
+  "axis_ms_moderation_p99": 0.1
+}

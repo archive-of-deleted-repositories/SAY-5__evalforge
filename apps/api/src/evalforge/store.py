@@ -65,9 +65,16 @@ def _default_db_url() -> str:
 def make_engine(url: str | None = None) -> Engine:
     url = url or _default_db_url()
     connect_args: dict[str, object] = {}
+    engine_kwargs: dict[str, object] = {"future": True}
     if url.startswith("sqlite"):
         connect_args["check_same_thread"] = False
-    engine = create_engine(url, future=True, connect_args=connect_args)
+        # In-memory SQLite needs a single shared connection across threads,
+        # otherwise every checkout gets a fresh empty database.
+        if ":memory:" in url or url.endswith(":memory:"):
+            from sqlalchemy.pool import StaticPool
+
+            engine_kwargs["poolclass"] = StaticPool
+    engine = create_engine(url, connect_args=connect_args, **engine_kwargs)
     Base.metadata.create_all(engine)
     return engine
 

@@ -69,3 +69,17 @@ markers = [
   "integration: integration test (needs testcontainers)",
   "slow: slow tests",
 ]
+
+[tool.coverage.run]
+source = ["evalforge"]
+omit = [
+  # Bench is exercised by the bench-smoke CI job, not unit tests.
+  "*/evalforge/bench.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.:",
+  "raise NotImplementedError",
+]
