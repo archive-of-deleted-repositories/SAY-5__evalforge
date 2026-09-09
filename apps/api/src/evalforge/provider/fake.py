@@ -54,9 +54,11 @@ class FakeProvider:
 
 
 def get_default_provider() -> JudgeProvider:
-    name = os.environ.get("EVALFORGE_PROVIDER", "fake").lower()
+    name = os.environ.get("EVALFORGE_PROVIDER", "fake").strip().lower()
     if name == "claude":
         from evalforge.provider.claude_stub import ClaudeProvider
 
         return ClaudeProvider()
-    return FakeProvider()
+    if name == "fake":
+        return FakeProvider()
+    raise ValueError("EVALFORGE_PROVIDER must be 'fake' or 'claude'.")

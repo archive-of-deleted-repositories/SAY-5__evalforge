@@ -18,7 +18,11 @@ services:
       context: ./apps/api
     environment:
       EVALFORGE_DB_URL: postgresql+psycopg://evalforge:evalforge@postgres:5432/evalforge
-      EVALFORGE_PROVIDER: fake
+      EVALFORGE_PROVIDER: ${EVALFORGE_PROVIDER:-fake}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      EVALFORGE_CLAUDE_MODEL: ${EVALFORGE_CLAUDE_MODEL:-}
+      EVALFORGE_API_KEY: ${EVALFORGE_API_KEY:-}
+      EVALFORGE_CLAUDE_MAX_CONCURRENCY: ${EVALFORGE_CLAUDE_MAX_CONCURRENCY:-2}
     ports:
       - "8000:8000"
     depends_on:

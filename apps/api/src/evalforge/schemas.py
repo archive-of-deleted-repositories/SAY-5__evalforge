@@ -7,7 +7,7 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Axis(StrEnum):
@@ -50,6 +50,15 @@ class ScoreRequest(BaseModel):
     prompt_version: str = Field(min_length=1, max_length=64)
     output_text: str = Field(min_length=1, max_length=32_768)
     context: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("context")
+    @classmethod
+    def validate_rubric(cls, context: dict[str, Any]) -> dict[str, Any]:
+        if "rubric" in context:
+            rubric = context["rubric"]
+            if not isinstance(rubric, str) or not rubric.strip() or len(rubric) > 16_384:
+                raise ValueError("context.rubric must be nonempty text of at most 16384 characters")
+        return context
 
 
 class ScoreResponse(BaseModel):

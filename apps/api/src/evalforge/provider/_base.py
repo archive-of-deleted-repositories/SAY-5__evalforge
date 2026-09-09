@@ -6,6 +6,10 @@ from dataclasses import dataclass
 from typing import Protocol
 
 
+class JudgeProviderError(RuntimeError):
+    """A configured judge could not produce a trustworthy verdict."""
+
+
 @dataclass(frozen=True, slots=True)
 class JudgeVerdict:
     score: float
