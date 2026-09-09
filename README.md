@@ -98,6 +98,9 @@ operator's chosen model and account.
 
 ## Test
 
+Frontend tools require Node.js 20.19+ on the 20.x release line, 22.12+ on 22.x,
+or 24+. Install frontend dependencies from the committed lockfile with `npm ci`.
+
 ```
 make test         # all unit + integration
 make bench        # latency bench
